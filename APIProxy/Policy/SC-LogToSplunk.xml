@@ -1,0 +1,24 @@
+<!-- this policy lets you call to an external service from your API flow -->
+<ServiceCallout async="true" continueOnError="false" enabled="true" xmlns="http://www.sap.com/apimgmt">
+	<!-- The request that gets sent from the API proxy flow to the external service -->
+	 <Request clearPayload="true" variable="myRequest">
+	     
+	    <Set>
+	        <Headers>
+              <Header name="Accept">application/json</Header>
+              <Header name="apikey">2DFGTOhRToffUy7neGxaHw5MKZ4Vo7FZ</Header>
+         </Headers>
+            <Payload contentType="application/json"  variablePrefix="@" variableSuffix="#">
+           {"event": @sapapim.AuditData#}
+            </Payload>
+            <Verb>POST</Verb>
+            <Path>/splunk/api/v1/apimanagement</Path>
+        </Set>
+    </Request>    
+    
+    <Timeout>30000</Timeout>
+       <LocalTargetConnection>
+    	<APIProxy>Splunk</APIProxy>
+        <ProxyEndpoint>default</ProxyEndpoint>
+       </LocalTargetConnection>
+</ServiceCallout>

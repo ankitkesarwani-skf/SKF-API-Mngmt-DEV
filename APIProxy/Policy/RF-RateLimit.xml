@@ -1,0 +1,20 @@
+<!-- can be used to create custom messages in case of an error condition -->
+<RaiseFault async="true" continueOnError="false" enabled="true" xmlns="http://www.sap.com/apimgmt">
+	<!-- Defines the response message returned to the requesting client -->
+    <FaultResponse>
+        <Set>
+            <Headers/>
+            <Payload contentType="application/json" variablePrefix="#" variableSuffix="%">
+            {
+              "errorInfo": {
+                "status": "429",
+                "message": "The API can't provide a response to you request due to too many requests. Please retry in a couple of seconds."
+                }
+            } 
+            </Payload>
+            <StatusCode>429</StatusCode>
+            <ReasonPhrase>Too many requests</ReasonPhrase>
+        </Set>
+    </FaultResponse>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

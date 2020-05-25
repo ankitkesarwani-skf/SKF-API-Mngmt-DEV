@@ -1,0 +1,21 @@
+<!-- can be used to create custom messages in case of an error condition -->
+<RaiseFault async="true" continueOnError="false" enabled="true" xmlns="http://www.sap.com/apimgmt">
+	<!-- Defines the response message returned to the requesting client -->
+	<FaultResponse>
+		<Set>
+			<!-- Sets or overwrites HTTP headers in the respone message -->
+			<Headers/>
+			<Payload contentType="application/json" variablePrefix="#" variableSuffix="%">
+             {
+              "errorInfo": {
+                "status": "428",
+                "message": "Please pass Authorization header with key 'Authorization'."
+                }
+            } 
+            </Payload>
+            <StatusCode>428</StatusCode>
+            <ReasonPhrase>Precondition - MissingHeader</ReasonPhrase>
+		</Set>
+	</FaultResponse>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

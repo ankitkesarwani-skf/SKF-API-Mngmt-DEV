@@ -1,0 +1,21 @@
+<!-- can be used to create custom messages in case of an error condition -->
+<RaiseFault async="true" continueOnError="false" enabled="true" xmlns="http://www.sap.com/apimgmt">
+	<!-- Defines the response message returned to the requesting client -->
+	<FaultResponse>
+		<Set>
+			<!-- Sets or overwrites HTTP headers in the respone message -->
+			<Headers/>
+			<Payload contentType="application/json" variablePrefix="#" variableSuffix="%">
+            {
+              "errorInfo": {
+                "status": "405",
+                "message": "The method is not supported."
+                }
+            } 
+            </Payload>
+            <StatusCode>405</StatusCode>
+            <ReasonPhrase>Not Acceptable</ReasonPhrase>
+		</Set>
+	</FaultResponse>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

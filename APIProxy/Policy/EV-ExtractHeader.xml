@@ -1,0 +1,7 @@
+<ExtractVariables async="true" continueOnError="true" enabled="true" xmlns='http://www.sap.com/apimgmt' >
+<Header name="Name">
+        <Pattern ignoreCase="false">{Name}</Pattern>
+     </Header>
+     <VariablePrefix>clientrequest</VariablePrefix>
+
+</ExtractVariables>

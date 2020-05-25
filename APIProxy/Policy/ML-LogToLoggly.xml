@@ -1,0 +1,8 @@
+<MessageLogging async="false" continueOnError="false" enabled="true" xmlns='http://www.sap.com/apimgmt'>
+	<Syslog>
+		<Message>[31a43c30-26d4-4de6-979a-98ebb27199b4@41058 tag="SKF-API-Management-DEV" tag="{apiproxy.name}"] {sapapim.logmessage} </Message>
+    	<Host>logs-01.loggly.com</Host>
+	    <Port>514</Port>
+	    <Protocol>TCP</Protocol>
+	</Syslog>
+</MessageLogging>

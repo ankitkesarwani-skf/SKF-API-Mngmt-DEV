@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ProxyEndPoint default="true">
+    <name>default</name>
+    <base_path>/simpleapis/helloskf/v1</base_path>
+    <properties/>
+    <routeRules>
+        <routeRule>
+            <name>default</name>
+            <conditions>request.verb="GET"</conditions>
+            <sequence>1</sequence>
+            <faultRules/>
+        </routeRule>
+    </routeRules>
+    <faultRules/>
+    <preFlow>
+        <name>PreFlow</name>
+        <request>
+            <isRequest>true</isRequest>
+            <steps>
+                <step>
+                    <policy_name>RF-MissingHeader</policy_name>
+                    <condition>(request.header.Name = null) or (request.header.Name = "")</condition>
+                    <sequence>5</sequence>
+                </step>
+                <step>
+                    <policy_name>RF-RateLimit</policy_name>
+                    <condition>(ratelimit.failed = "true")</condition>
+                    <sequence>4</sequence>
+                </step>
+                <step>
+                    <policy_name>RaiseFault-MothodNotAllowed</policy_name>
+                    <condition>(request.verb != "GET")</condition>
+                    <sequence>3</sequence>
+                </step>
+                <step>
+                    <policy_name>QT-LimitCallsPerMinute</policy_name>
+                    <condition> </condition>
+                    <sequence>2</sequence>
+                </step>
+                <step>
+                    <policy_name>KVM-ExtractGlobalKeyValue</policy_name>
+                    <condition> </condition>
+                    <sequence>1</sequence>
+                </step>
+            </steps>
+        </request>
+        <response>
+            <isRequest>false</isRequest>
+            <steps/>
+        </response>
+    </preFlow>
+    <postFlow>
+        <name>PostFlow</name>
+        <request>
+            <isRequest>true</isRequest>
+            <steps/>
+        </request>
+        <response>
+            <isRequest>true</isRequest>
+            <steps>
+                <step>
+                    <policy_name>JS-LogMessage</policy_name>
+                    <condition> </condition>
+                    <sequence>1</sequence>
+                </step>
+                <step>
+                    <policy_name>JS-LogAuditData</policy_name>
+                    <condition> </condition>
+                    <sequence>2</sequence>
+                </step>
+                <step>
+                    <policy_name>SC-LogToSplunk</policy_name>
+                    <condition> </condition>
+                    <sequence>3</sequence>
+                </step>
+            </steps>
+        </response>
+    </postFlow>
+    <conditionalFlows>
+        <conditionalFlow>
+            <name>trafficcontrol</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AC-AllowIPsRange</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-AccessDenied</policy_name>
+                        <condition>(acl.AC-AllowIPsRange.failed = "true")</condition>
+                        <sequence>2</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>false</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-HelloMessage</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/trafficcontrol" OR proxy.pathsuffix MatchesPath "/trafficcontrol/**" OR proxy.pathsuffix MatchesPath "/trafficcontrol(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>4</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>hello</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>EV-ExtractHeader</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-MissingMandotoryHeader</policy_name>
+                        <condition>(request.header.Name.value = "")</condition>
+                        <sequence>2</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-HelloMessage</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/hello" OR proxy.pathsuffix MatchesPath "/hello/**" OR proxy.pathsuffix MatchesPath "/hello(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>1</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>workflow/approval</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>VAK-VerifyAPIKEY</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-APIKeyMissing</policy_name>
+                        <condition> (request.header.APIKey = null) or (request.header.APIKey = "") </condition>
+                        <sequence>2</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-VerifyAPIKey</policy_name>
+                        <condition> (verifyapikey.VAK-VerifyAPIKEY.failed = "true")</condition>
+                        <sequence>3</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-ScopeUnAuthorized</policy_name>
+                        <condition> (sapapim.AuthorizedScope = "UnAuthorized")</condition>
+                        <sequence>5</sequence>
+                    </step>
+                    <step>
+                        <policy_name>JS-CheckCustAttrScope</policy_name>
+                        <condition> </condition>
+                        <sequence>4</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>false</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-MessageVerifyAPIKey</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/workflow/approval" OR proxy.pathsuffix MatchesPath "/workflow/approval/**" OR proxy.pathsuffix MatchesPath "/workflow/approval(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>6</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>DefaultFaultFlow</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>defaultRaiseFaultPolicy</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </request>
+            <conditions>proxy.pathsuffix MatchesPath "/hello" OR proxy.pathsuffix MatchesPath "/hello/**" OR proxy.pathsuffix MatchesPath "/hello(**" OR (proxy.pathsuffix MatchesPath "/verifyapikey" OR proxy.pathsuffix MatchesPath "/verifyapikey/**" OR proxy.pathsuffix MatchesPath "/verifyapikey(**" OR (proxy.pathsuffix MatchesPath "/verifyoauthtoken" OR proxy.pathsuffix MatchesPath "/verifyoauthtoken/**" OR proxy.pathsuffix MatchesPath "/verifyoauthtoken(**" OR (proxy.pathsuffix MatchesPath "/trafficcontrol" OR proxy.pathsuffix MatchesPath "/trafficcontrol/**" OR proxy.pathsuffix MatchesPath "/trafficcontrol(**" OR (proxy.pathsuffix MatchesPath "/throttling" OR proxy.pathsuffix MatchesPath "/throttling/**" OR proxy.pathsuffix MatchesPath "/throttling(**" OR (proxy.pathsuffix MatchesPath "/workflow/approval" OR proxy.pathsuffix MatchesPath "/workflow/approval/**" OR proxy.pathsuffix MatchesPath "/workflow/approval(**" OR (proxy.pathsuffix MatchesPath "/SWAGGER_JSON" OR proxy.pathsuffix MatchesPath "/SWAGGER_JSON/**" OR proxy.pathsuffix MatchesPath "/SWAGGER_JSON(**"</conditions>
+            <readOnly>true</readOnly>
+            <sequence>7</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>throttling</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>RF-RaiseFaultSpikeArrest</policy_name>
+                        <condition>(ratelimit.failed = "true")</condition>
+                        <sequence>2</sequence>
+                    </step>
+                    <step>
+                        <policy_name>SA-LimitCallsPerInterval</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>false</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-HelloMessage</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/throttling" OR proxy.pathsuffix MatchesPath "/throttling/**" OR proxy.pathsuffix MatchesPath "/throttling(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>5</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>verifyoauthtoken</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>RF-AuthHeaderMissing</policy_name>
+                        <condition>(request.header.Authorization = null) or (request.header.Authorization = "") </condition>
+                        <sequence>1</sequence>
+                    </step>
+                    <step>
+                        <policy_name>OA-ValidateAccessToken</policy_name>
+                        <condition> </condition>
+                        <sequence>2</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-InvalidAccessToken</policy_name>
+                        <condition> (oauthV2.OA-ValidateAccessToken.failed = "true")</condition>
+                        <sequence>3</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>false</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-MessageVerifyAPIKey</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/verifyoauthtoken" OR proxy.pathsuffix MatchesPath "/verifyoauthtoken/**" OR proxy.pathsuffix MatchesPath "/verifyoauthtoken(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>3</sequence>
+        </conditionalFlow>
+        <conditionalFlow>
+            <name>verifyapikey</name>
+            <request>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>RF-VerifyAPIKey</policy_name>
+                        <condition>(verifyapikey.VAK-VerifyAPIKEY.failed = "true")</condition>
+                        <sequence>3</sequence>
+                    </step>
+                    <step>
+                        <policy_name>RF-APIKeyMissing</policy_name>
+                        <condition>(request.header.APIKey = null) or (request.header.APIKey = "") </condition>
+                        <sequence>2</sequence>
+                    </step>
+                    <step>
+                        <policy_name>VAK-VerifyAPIKEY</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </request>
+            <response>
+                <isRequest>true</isRequest>
+                <steps>
+                    <step>
+                        <policy_name>AM-MessageVerifyAPIKey</policy_name>
+                        <condition> </condition>
+                        <sequence>1</sequence>
+                    </step>
+                </steps>
+            </response>
+            <conditions>(proxy.pathsuffix MatchesPath "/verifyapikey" OR proxy.pathsuffix MatchesPath "/verifyapikey/**" OR proxy.pathsuffix MatchesPath "/verifyapikey(**")AND(request.verb = "GET")</conditions>
+            <readOnly>true</readOnly>
+            <sequence>2</sequence>
+        </conditionalFlow>
+    </conditionalFlows>
+</ProxyEndPoint>

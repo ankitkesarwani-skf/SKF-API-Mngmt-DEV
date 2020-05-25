@@ -1,0 +1,21 @@
+<!-- can be used to create custom messages in case of an error condition -->
+<RaiseFault async="true" continueOnError="false" enabled="true" xmlns="http://www.sap.com/apimgmt">
+	<!-- Defines the response message returned to the requesting client -->
+    <FaultResponse>
+        <Set>
+            <Headers/>
+            <Payload contentType="application/json" variablePrefix="#" variableSuffix="%">
+            {
+              "errors": {
+                "code": "412",
+                "message": "Sorry, in order to greet you we would like to know your good name and expect you to pass your name in header parameter 'Name'. "
+                    
+                }
+            } 
+            </Payload>
+            <StatusCode>412</StatusCode>
+            <ReasonPhrase>Mandotory Header 'Name' Missing</ReasonPhrase>
+        </Set>
+    </FaultResponse>
+	<IgnoreUnresolvedVariables>true</IgnoreUnresolvedVariables>
+</RaiseFault>

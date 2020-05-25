@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy>
+    <name>SimpleAPIs</name>
+    <title>SimpleAPIS</title>
+    <description>&lt;p&gt;This is a set of simple API to perform SKF greeting and also understand different types of security controls, traffic management and throttling in APIs published in SKF API Management.&lt;/p&gt; 
+&lt;p&gt;&lt;strong&gt;Approval Required: &lt;/strong&gt;Yes&lt;/p&gt; 
+&lt;p&gt;The Approval&amp;nbsp; to consume this API can be requested&amp;nbsp;&lt;a href="https://sappod32.skf.net/skf.com~apps~misc~apiapproval_web/API_ManagementComponent/index.html" rel="nofollow"&gt;here&lt;/a&gt;&lt;/p&gt;</description>
+    <service_code>REST</service_code>
+    <life_cycle>
+        <changed_by>GH6364</changed_by>
+        <created_by>GH6364</created_by>
+    </life_cycle>
+    <proxyEndPoints>
+        <proxyEndPoint>
+            <proxyEndPointName>default</proxyEndPointName>
+            <apiResourceName>trafficcontrol</apiResourceName>
+            <apiResourceName>verifyapikey</apiResourceName>
+            <apiResourceName>SWAGGER_JSON</apiResourceName>
+            <apiResourceName>verifyoauthtoken</apiResourceName>
+            <apiResourceName>throttling</apiResourceName>
+            <apiResourceName>hello</apiResourceName>
+            <apiResourceName>workflow/approval</apiResourceName>
+        </proxyEndPoint>
+    </proxyEndPoints>
+    <targetEndPoints>
+        <targetEndPoint>default</targetEndPoint>
+    </targetEndPoints>
+    <policies>
+        <policy type="RaiseFault">RF-AccessDenied</policy>
+        <policy type="RaiseFault">RaiseFault-MothodNotAllowed</policy>
+        <policy type="KeyValueMapOperations">KV-FetchKeyValue</policy>
+        <policy type="RaiseFault">RF-APIKeyMissing</policy>
+        <policy type="RaiseFault">RF-RateLimit</policy>
+        <policy type="GetOAuthV2Info">OAG-GetTokenDetails</policy>
+        <policy type="RaiseFault">defaultRaiseFaultPolicy</policy>
+        <policy type="Javascript">JS-CheckCustAttrScope</policy>
+        <policy type="RaiseFault">RF-ScopeUnAuthorized</policy>
+        <policy type="MessageLogging">MessageLogging-LogIncomingTraffic</policy>
+        <policy type="RaiseFault">RF-MissingHeader</policy>
+        <policy type="RaiseFault">RF-InvalidAccessToken</policy>
+        <policy type="MessageLogging">ML-LogRequest</policy>
+        <policy type="VerifyAPIKey">VAK-VerifyAPIKEY</policy>
+        <policy type="KeyValueMapOperations">KVM-ExtractGlobalKeyValue</policy>
+        <policy type="SpikeArrest">SA-LimitCallsPerInterval</policy>
+        <policy type="Quota">QT-LimitCallsPerMinute</policy>
+        <policy type="RaiseFault">RF-AuthHeaderMissing</policy>
+        <policy type="Javascript">JS-LogAuditData</policy>
+        <policy type="AssignMessage">AM-HelloMessage</policy>
+        <policy type="ServiceCallout">SC-LogToSplunk</policy>
+        <policy type="OAuthV2">OA-ValidateAccessToken</policy>
+        <policy type="MessageLogging">ML-LogToLoggly</policy>
+        <policy type="AccessControl">AC-AllowIPsRange</policy>
+        <policy type="RaiseFault">RF-RaiseFaultSpikeArrest</policy>
+        <policy type="AssignMessage">RF-MissingMandotoryHeader</policy>
+        <policy type="ExtractVariable">EV-ExtractHeader</policy>
+        <policy type="RaiseFault">RF-VerifyAPIKey</policy>
+        <policy type="AssignMessage">AM-MessageVerifyAPIKey</policy>
+        <policy type="MessageLogging">ML-LogResponse</policy>
+        <policy type="Javascript">JS-LogMessage</policy>
+    </policies>
+    <fileResources>
+        <fileResource type="js">JS-LogAuditDataResponse</fileResource>
+        <fileResource type="js">JS-CheckCustAttrScope</fileResource>
+        <fileResource type="js">JS-LogMessage</fileResource>
+    </fileResources>
+</APIProxy>

@@ -1,0 +1,20 @@
+<MessageLogging async="false" continueOnError="false" enabled="true" xmlns='http://www.sap.com/apimgmt'>
+	<Syslog>
+		<Message>[c96ff56ab2b048f5919f25727c995a0f@41058 tag="SKF-API-Management" tag="{apiproxy.name}"] Message.id = {system.uuid}</Message>
+    	<!-- Host must be valid DNS/IP -->
+    	<!-- <Host>127.0.0.1</Host> -->
+		<Host>logs-01.loggly.com</Host>
+    	<!-- This is default port value -->
+	    <Port>514</Port>
+	    <Protocol>TCP</Protocol>
+     	<SSLInfo>  
+        		<Enabled>false</Enabled> 
+     	<ClientAuthEnabled>false</ClientAuthEnabled> 
+     	<KeyStore/> 
+     	<KeyAlias/> 
+     	<TrustStore/> 
+     	<Ciphers/> 
+     	<Protocols/> 
+ 	</SSLInfo> 
+	</Syslog>
+</MessageLogging>

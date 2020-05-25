@@ -1,0 +1,14 @@
+<AssignMessage async="false" continueOnError="true" enabled="true" xmlns='http://www.sap.com/apimgmt'>
+	<Set>
+		<Payload contentType="application/json" variablePrefix="@" variableSuffix="#">
+	{ 
+		 "Message": "Hello @request.header.Name#, have a great day!"
+	}
+		</Payload>
+	</Set>
+	<Remove>
+        <Headers/>
+    </Remove>
+	<IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+	<AssignTo createNew="false" type="response">response</AssignTo>
+</AssignMessage>
